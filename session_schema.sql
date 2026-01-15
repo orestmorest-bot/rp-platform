@@ -52,7 +52,8 @@ CREATE TABLE IF NOT EXISTS public.rp_session_messages (
   message_type TEXT NOT NULL CHECK (message_type IN ('ooc', 'narration')),
   body TEXT NOT NULL,
   character_id UUID REFERENCES public.characters(id) ON DELETE SET NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  edited_at TIMESTAMPTZ
 );
 
 CREATE INDEX IF NOT EXISTS rp_session_messages_session_id_idx ON public.rp_session_messages (session_id);
@@ -164,6 +165,12 @@ CREATE POLICY "rp_session_messages_insert_sender"
       WHERE s.id = session_id AND (auth.uid() = s.user_a OR auth.uid() = s.user_b)
     )
   );
+
+DROP POLICY IF EXISTS "rp_session_messages_update_sender" ON public.rp_session_messages;
+CREATE POLICY "rp_session_messages_update_sender"
+  ON public.rp_session_messages FOR UPDATE
+  USING (auth.uid() = sender_id)
+  WITH CHECK (auth.uid() = sender_id);
 
 -- RP Response Times
 ALTER TABLE public.rp_response_times ENABLE ROW LEVEL SECURITY;
