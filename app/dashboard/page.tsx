@@ -796,14 +796,15 @@ USING (is_public = true);`);
 
     if (topWritersData) {
       // Get like counts for each writer
-      const writersWithLikes = await Promise.all(
+      const writersWithLikes: Writer[] = await Promise.all(
         topWritersData.map(async (writer) => {
-      const { count } = await supabase
-        .from("writer_likes")
-        .select("id", { count: "exact", head: true })
-            .eq("writer_id", writer.id);
+          const typedWriter = writer as Writer;
+          const { count } = await supabase
+            .from("writer_likes")
+            .select("id", { count: "exact", head: true })
+            .eq("writer_id", typedWriter.id);
           return {
-            ...writer,
+            ...typedWriter,
             likes_count: count || 0,
           };
         })
