@@ -787,6 +787,8 @@ USING (is_public = true);`);
         user_id,
         name,
         portrait_url,
+        description,
+        created_at,
         last_seen
       `)
       .order("created_at", { ascending: false })
