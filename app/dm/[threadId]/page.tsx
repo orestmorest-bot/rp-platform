@@ -44,12 +44,11 @@ export default function DmThreadPage() {
 
   useEffect(() => {
     let mounted = true;
+    let currentUserId: string | null = null;
 
     async function load() {
       setLoading(true);
       setError(null);
-
-      let userId: string | null = null;
 
       try {
         const { data: userRes, error: userError } = await supabase.auth.getUser();
@@ -67,8 +66,8 @@ export default function DmThreadPage() {
           return;
         }
         if (!mounted) return;
-        userId = userRes.user.id;
-        setMe(userId);
+        currentUserId = userRes.user.id;
+        setMe(currentUserId);
       } catch (err) {
         console.error("Exception in load:", err);
         setError(err instanceof Error ? err.message : "Failed to load. Please try again.");
@@ -78,7 +77,7 @@ export default function DmThreadPage() {
         return;
       }
 
-      if (!userId) {
+      if (!currentUserId) {
         console.error("No user ID available");
         setError("Failed to authenticate. Please try again.");
         setLoading(false);
@@ -95,7 +94,7 @@ export default function DmThreadPage() {
         .single();
 
       if (threadData && mounted) {
-        const otherUserIdValue = threadData.user_a === userId ? threadData.user_b : threadData.user_a;
+        const otherUserIdValue = threadData.user_a === currentUserId ? threadData.user_b : threadData.user_a;
         setOtherUserId(otherUserIdValue);
         
         // Load other user's writer info
@@ -113,7 +112,7 @@ export default function DmThreadPage() {
         const { data: currentWriter } = await supabase
           .from("writers")
           .select("id, name, portrait_url")
-          .eq("user_id", userId)
+          .eq("user_id", currentUserId)
           .maybeSingle();
 
         if (currentWriter && mounted) {
@@ -157,13 +156,13 @@ export default function DmThreadPage() {
       }
 
       // Mark all messages as read when viewing the thread
-      if (userId && messagesData && messagesData.length > 0) {
+      if (currentUserId && messagesData && messagesData.length > 0) {
         const latestMessage = messagesData[messagesData.length - 1]; // Last message (most recent)
         await supabase
           .from("dm_thread_reads")
           .upsert({
             thread_id: threadId,
-            user_id: userId,
+            user_id: currentUserId,
             last_read_at: new Date().toISOString(),
             last_read_message_id: latestMessage.id,
           }, {
@@ -199,12 +198,12 @@ export default function DmThreadPage() {
           
           // Mark new message as read if user is viewing the thread
           // This ensures messages are marked as read when they arrive in real-time
-          if (userId) {
+          if (currentUserId) {
             await supabase
               .from("dm_thread_reads")
               .upsert({
                 thread_id: threadId,
-                user_id: userId,
+                user_id: currentUserId,
                 last_read_at: new Date().toISOString(),
                 last_read_message_id: newMsg.id,
               }, {
