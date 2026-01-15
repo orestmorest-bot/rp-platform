@@ -145,6 +145,7 @@ export default function SessionPage() {
 
   useEffect(() => {
     let mounted = true;
+    const currentSession = session;
 
     async function load() {
       setLoading(true);
@@ -541,7 +542,7 @@ export default function SessionPage() {
 
         // Filter out participants (only show viewers, not participants)
         const nonParticipantViewers = viewersWithDetails.filter((viewer) => {
-          return viewer.user_id !== session.user_a && viewer.user_id !== session.user_b;
+          return viewer.user_id !== currentSession.user_a && viewer.user_id !== currentSession.user_b;
         });
 
         // Sort by joined_at (most recent first) and limit to 10 for display
