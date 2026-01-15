@@ -497,6 +497,7 @@ export default function SessionPage() {
     if (!session || !session.is_public) return; // Only track viewers for public sessions
     
     let mounted = true;
+    const currentSession = session;
     let viewersChannel: any = null;
 
     // Load current viewers (shared function for both authenticated and unauthenticated)
