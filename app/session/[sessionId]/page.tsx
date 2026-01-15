@@ -631,17 +631,17 @@ export default function SessionPage() {
       // Remove viewer from session (only for authenticated users who were tracked)
       if (me) {
         // Fire and forget - cleanup doesn't need to wait for this
-        supabase
-          .from("rp_session_viewers")
-          .delete()
-          .eq("session_id", sessionId)
-          .eq("user_id", me)
-          .then(() => {
-            // Successfully removed
-          })
-          .catch((err) => {
+        void (async () => {
+          try {
+            await supabase
+              .from("rp_session_viewers")
+              .delete()
+              .eq("session_id", sessionId)
+              .eq("user_id", me);
+          } catch (err) {
             console.error("Error removing viewer on cleanup:", err);
-          });
+          }
+        })();
       }
 
       // Unsubscribe from viewer channel
