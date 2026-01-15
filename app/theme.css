@@ -1,0 +1,25 @@
+:root {
+  --bg0: #0b0f14;  /* app */
+  --bg1: #0f1620;  /* sidebar */
+  --bg2: #121b26;  /* panels */
+  --bg3: #162232;  /* cards */
+  --bg4: #1a2a3d;  /* hover */
+  --bg5: #20344b;  /* active */
+  --borderSoft: rgba(255, 255, 255, 0.06);
+  --borderHard: rgba(255, 255, 255, 0.1);
+
+  --textStrong: rgba(255, 255, 255, 0.92);
+  --text: rgba(255, 255, 255, 0.82);
+  --textMuted: rgba(255, 255, 255, 0.62);
+  --textFaint: rgba(255, 255, 255, 0.42);
+
+  --accent: #4f8cff;
+  --accentSoft: rgba(79, 140, 255, 0.18);
+
+  --r12: 12px;
+  --r16: 16px;
+
+  --shadow1: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow2: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
