@@ -68,8 +68,22 @@ export default function FeedDetailPage() {
 
       if (!mounted) return;
 
-      if (error) setError(error.message);
-      else setPost(data as DetailRow);
+      if (error) {
+        setError(error.message);
+      } else if (data) {
+        const row = data as DetailRow & {
+          character: DetailRow["character"] | DetailRow["character"][];
+        };
+        const character = Array.isArray(row.character) ? row.character[0] : row.character;
+        if (!character) {
+          setError("Character not found.");
+        } else {
+          setPost({
+            ...row,
+            character,
+          });
+        }
+      }
 
       setLoading(false);
     }
